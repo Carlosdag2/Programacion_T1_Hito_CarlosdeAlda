@@ -43,7 +43,7 @@ def tienda():
             self.clientes_registrados = {}
 
         def agregar_cliente(self, cliente):
-            if cliente.correo not in self.clientes_registrados:  # Cambia a usar el correo como clave
+            if cliente.correo not in self.clientes_registrados:
                 self.clientes_registrados[cliente.correo] = cliente
                 print(f"Cliente '{cliente.nombre_usuario}' registrado exitosamente.")
             else:
@@ -104,7 +104,7 @@ def tienda():
             print(f"{key}. {producto.nombre} - {producto.precio:.2f} € (Disponibles: {producto.unidades})")
 
 
-    def manejar_tienda(cliente, productos, ivas_por_pais):
+    def manejar_tienda(cliente, productos):
         if cliente is None:
             print(" ")
             print("Debes iniciar sesión o registrarte para acceder a la tienda.")
@@ -167,12 +167,10 @@ def tienda():
             metodo_pago = input("Seleccione el método de pago (Tarjeta/PayPal): ").lower()
 
             if metodo_pago == "tarjeta":
-                # Solicitar información adicional para el pago con tarjeta
                 numero_tarjeta = input("Ingrese el número de tarjeta: ")
                 fecha_vencimiento = input("Ingrese la fecha de vencimiento (MM/AA): ")
                 codigo_seguridad = input("Ingrese el código de seguridad (CVV): ")
 
-                # Validar la información de la tarjeta (puedes agregar más validaciones según tus necesidades)
                 if len(numero_tarjeta) == 16 and fecha_vencimiento.count('/') == 1 and len(codigo_seguridad) == 3:
                     mostrar_carrito(cliente)
                     print("\nInformación de tarjeta válida. Procesando el pago...")
@@ -186,7 +184,6 @@ def tienda():
                 password_pago = input("Ingrese una contraseña para este pago en PayPal: ")
                 mostrar_carrito(cliente)
 
-                # Simulación de autenticación de PayPal (puedes ajustar según la integración real con PayPal)
                 if autenticar_paypal(email_paypal, password_pago):
                     print("\n Autenticación de PayPal exitosa. Procesando el pago...")
                     vaciar_carrito(cliente, productos)
@@ -198,8 +195,6 @@ def tienda():
         else:
             print("El carrito está vacío. No hay productos para pagar.")
 
-    # ...
-
     def autenticar_paypal(email, password):
         return True
 
@@ -210,13 +205,12 @@ def tienda():
 
     def vaciar_carrito(cliente, productos):
         for nombre, info in cliente.carrito.items():
-            # Restaurar las unidades del producto eliminado del carrito
             for prod_id, producto in productos.items():
                 if producto.nombre == nombre:
                     producto.unidades += info["cantidad"]
                     break
 
-        cliente.carrito = {}  # Vaciar el carrito del cliente
+        cliente.carrito = {}
         print(" ")
 
     def mostrar_menu():
@@ -246,7 +240,7 @@ def tienda():
         if opcion == "1":
             nuevo_cliente = solicitar_datos_cliente()
             registro.agregar_cliente(nuevo_cliente)
-            usuario_registrado = True  # Marca que el usuario ha sido registrado
+            usuario_registrado = True
         elif opcion == "2":
             if usuario_registrado:
                 print("Bienvenido a la tienda en línea.")
@@ -254,7 +248,6 @@ def tienda():
                 correo = input("Ingrese su correo electrónico: ")
                 password = input("Ingrese su contraseña: ")
 
-                # Asignar el cliente autenticado a la variable global
                 cliente_autenticado = registro.login(correo, password)
                 if cliente_autenticado:
                     print(f"¡Bienvenido, {cliente_autenticado.nombre_usuario}!")
@@ -262,7 +255,7 @@ def tienda():
                 print("Debes registrarte antes de iniciar sesión.")
         elif opcion == "3":
             if cliente_autenticado is not None:
-                manejar_tienda(cliente_autenticado, productos, ivas_por_pais)
+                manejar_tienda(cliente_autenticado, productos)
             else:
                 print("Debes iniciar sesión para acceder a la tienda.")
         elif opcion == "4":
